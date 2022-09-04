@@ -4,7 +4,7 @@
  */
 const ethers = require('ethers');
 
-const CONTRACT_PATH = "./chainbridge-solidity/build/contracts"
+const CONTRACT_PATH = "/home/burt/p2/src/blk/cdot/chainbridge/phala-solidity/build/contracts"
 const ContractABIs = {
     Bridge: require(CONTRACT_PATH + "/Bridge.json"),
     Erc20Handler: require(CONTRACT_PATH + "/ERC20Handler.json"),

@@ -28,8 +28,11 @@ const deployCmd = new Command("deploy")
     .option('--wetc', 'Deploy wrapped ETC Erc20 contract')
     .option('--config', 'Logs the configuration based on the deployment', false)
     .action(async (args) => {
+        console.log("<<<<<<<", args)
+        console.log(">>>>>>>")
         await setupParentArgs(args, args.parent)
         let startBal = await args.provider.getBalance(args.wallet.address)
+        console.log("startBal balance...", startBal)
         console.log("Deploying contracts...")
         if(args.all) {
             await deployBridgeContract(args);
@@ -46,14 +49,6 @@ const deployCmd = new Command("deploy")
             }
             if (args.erc20Handler) {
                 await deployERC20Handler(args);
-                deployed = true
-            }
-            if (args.erc721Handler) {
-                await deployERC721Handler(args)
-                deployed = true
-            }
-            if (args.genericHandler) {
-                await deployGenericHandler(args)
                 deployed = true
             }
             if (args.erc20) {
@@ -144,9 +139,16 @@ WETC:               ${args.WETCContract ? args.WETCContract : "Not Deployed"}
 
 
 async function deployBridgeContract(args) {
+    console.log("deployBridgeContract...");
     // Create an instance of a Contract Factory
     let factory = new ethers.ContractFactory(constants.ContractABIs.Bridge.abi, constants.ContractABIs.Bridge.bytecode, args.wallet);
 
+    console.log(        args.chainId,
+        args.relayers,
+        args.relayerThreshold,
+        ethers.utils.parseEther(args.fee.toString()),
+        args.expiry,
+        { gasPrice: args.gasPrice, gasLimit: args.gasLimit});
     // Deploy
     let contract = await factory.deploy(
         args.chainId,
@@ -154,7 +156,7 @@ async function deployBridgeContract(args) {
         args.relayerThreshold,
         ethers.utils.parseEther(args.fee.toString()),
         args.expiry,
-        { gasPrice: args.gasPrice, gasLimit: args.gasLimit}
+        // { gasPrice: args.gasPrice, gasLimit: args.gasLimit}
     );
     await contract.deployed();
     args.bridgeAddress = contract.address
@@ -163,19 +165,20 @@ async function deployBridgeContract(args) {
 
 async function deployERC20(args) {
     const factory = new ethers.ContractFactory(constants.ContractABIs.Erc20Mintable.abi, constants.ContractABIs.Erc20Mintable.bytecode, args.wallet);
-    const contract = await factory.deploy(args.erc20Name, args.erc20Symbol, args.erc20Decimals, { gasPrice: args.gasPrice, gasLimit: args.gasLimit});
+    const contract = await factory.deploy(args.erc20Name, args.erc20Symbol, args.erc20Decimals);
     await contract.deployed();
     args.erc20Contract = contract.address
     console.log("✓ ERC20 contract deployed")
 }
 
 async function deployERC20Handler(args) {
+    console.log("deployERC20Handler...")
     if (!isValidAddress(args.bridgeAddress)) {
         console.log("ERC20Handler contract failed to deploy due to invalid bridge address")
         return
     }
     const factory = new ethers.ContractFactory(constants.ContractABIs.Erc20Handler.abi, constants.ContractABIs.Erc20Handler.bytecode, args.wallet);
-    const contract = await factory.deploy(args.bridgeAddress, [], [], [], { gasPrice: args.gasPrice, gasLimit: args.gasLimit});
+    const contract = await factory.deploy(args.bridgeAddress, [], [], []);
     await contract.deployed();
     args.erc20HandlerContract = contract.address
     console.log("✓ ERC20Handler contract deployed")
@@ -183,7 +186,7 @@ async function deployERC20Handler(args) {
 
 async function deployERC721(args) {
     const factory = new ethers.ContractFactory(constants.ContractABIs.Erc721Mintable.abi, constants.ContractABIs.Erc721Mintable.bytecode, args.wallet);
-    const contract = await factory.deploy(args.erc721Name, args.erc721Symbol, args.erc721BaseUri, { gasPrice: args.gasPrice, gasLimit: args.gasLimit});
+    const contract = await factory.deploy(args.erc721Name, args.erc721Symbol, args.erc721BaseUri);
     await contract.deployed();
     args.erc721Contract = contract.address
     console.log("✓ ERC721 contract deployed")
