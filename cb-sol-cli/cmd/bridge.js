@@ -21,7 +21,6 @@ const registerResourceCmd = new Command("register-resource")
         console.log(222222222222222)
         console.log(args.handler, args.resourceId, args.targetContract);
         const tx = await bridgeInstance.adminSetResource(args.handler, args.resourceId, args.targetContract);
-        console.log(11111111111)
         await waitForTx(args.provider, tx.hash)
     })
 
