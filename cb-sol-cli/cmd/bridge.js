@@ -58,7 +58,7 @@ const setBurnCmd = new Command("set-burn")
         const bridgeInstance = new ethers.Contract(args.bridge, constants.ContractABIs.Bridge.abi, args.wallet);
 
         log(args,`Setting contract ${args.tokenContract} as burnable on handler ${args.handler}`);
-        const tx = await bridgeInstance.adminSetBurnable(args.handler, args.tokenContract, { gasPrice: args.gasPrice, gasLimit: args.gasLimit});
+        const tx = await bridgeInstance.adminSetBurnable(args.handler, args.tokenContract);
         await waitForTx(args.provider, tx.hash)
     })
 

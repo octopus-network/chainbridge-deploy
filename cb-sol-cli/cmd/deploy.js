@@ -164,6 +164,7 @@ async function deployBridgeContract(args) {
 }
 
 async function deployERC20(args) {
+    console.log("deployERC20...")
     const factory = new ethers.ContractFactory(constants.ContractABIs.Erc20Mintable.abi, constants.ContractABIs.Erc20Mintable.bytecode, args.wallet);
     const contract = await factory.deploy(args.erc20Name, args.erc20Symbol, args.erc20Decimals);
     await contract.deployed();
