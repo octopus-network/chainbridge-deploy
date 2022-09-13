@@ -18,8 +18,9 @@ const registerResourceCmd = new Command("register-resource")
 
         const bridgeInstance = new ethers.Contract(args.bridge, constants.ContractABIs.Bridge.abi, args.wallet);
         log(args,`Registering contract ${args.targetContract} with resource ID ${args.resourceId} on handler ${args.handler}`);
-        console.log(222222222222222)
+
         console.log(args.handler, args.resourceId, args.targetContract);
+
         const tx = await bridgeInstance.adminSetResource(args.handler, args.resourceId, args.targetContract);
         await waitForTx(args.provider, tx.hash)
     })

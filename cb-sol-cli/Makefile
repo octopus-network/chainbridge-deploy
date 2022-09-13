@@ -1,5 +1,5 @@
-SOL_URL=https://github.com/ChainSafe/chainbridge-solidity
-SOL_VERSION="v1.0.0"
+SOL_URL=https://github.com/octopus-network/chainbridge-solidity
+SOL_VERSION="dev/cs-pb"
 
 fetch-contracts:
 	@echo " > \033[32mFetching chainbridge-solidity contracts... \033[0m "

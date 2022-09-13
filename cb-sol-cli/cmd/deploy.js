@@ -32,7 +32,6 @@ const deployCmd = new Command("deploy")
         console.log(">>>>>>>")
         await setupParentArgs(args, args.parent)
         let startBal = await args.provider.getBalance(args.wallet.address)
-        console.log("startBal balance...", startBal)
         console.log("Deploying contracts...")
         if(args.all) {
             await deployBridgeContract(args);
@@ -143,12 +142,6 @@ async function deployBridgeContract(args) {
     // Create an instance of a Contract Factory
     let factory = new ethers.ContractFactory(constants.ContractABIs.Bridge.abi, constants.ContractABIs.Bridge.bytecode, args.wallet);
 
-    console.log(        args.chainId,
-        args.relayers,
-        args.relayerThreshold,
-        ethers.utils.parseEther(args.fee.toString()),
-        args.expiry,
-        { gasPrice: args.gasPrice, gasLimit: args.gasLimit});
     // Deploy
     let contract = await factory.deploy(
         args.chainId,
