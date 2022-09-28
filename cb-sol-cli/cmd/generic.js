@@ -12,12 +12,13 @@ const getHashCmd = new Command('deposit')
     .option('--recipient <address>', 'Destination recipient address', constants.relayerAddresses[4])
     .option('--resourceId <id>', 'ResourceID for transfer', constants.ERC20_RESOURCEID)
     .option('--bridge <address>', 'Bridge contract address', constants.BRIDGE_ADDRESS)
+    .option('--data <data>', 'Generic data to transfer ', "0x1234")
     .action(async function (args) {
         await setupParentArgs(args, args.parent.parent);
         // Instances
         const bridgeInstance = new ethers.Contract(args.bridge, constants.ContractABIs.Bridge.abi, args.wallet);
 
-        const hashOfCentrifugeAsset = ethers.utils.keccak256('0xc0ffee');
+        const hashOfCentrifugeAsset = ethers.utils.keccak256(args.data /*'0xc0ffee'*/);
         const data = Helpers.createGenericDepositData(hashOfCentrifugeAsset);
 
         log(args, `Constructed generic data deposit:`)
