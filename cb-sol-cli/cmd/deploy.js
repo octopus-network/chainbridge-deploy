@@ -50,6 +50,10 @@ const deployCmd = new Command("deploy")
                 await deployERC20Handler(args);
                 deployed = true
             }
+            if (args.genericHandler) {
+                await deployGenericHandler(args);
+                deployed = true
+            }
             if (args.erc20) {
                 await deployERC20(args)
                 deployed = true
@@ -204,7 +208,7 @@ async function deployGenericHandler(args) {
         return
     }
     const factory = new ethers.ContractFactory(constants.ContractABIs.GenericHandler.abi, constants.ContractABIs.GenericHandler.bytecode, args.wallet)
-    const contract = await factory.deploy(args.bridgeAddress, [], [], [], [], { gasPrice: args.gasPrice, gasLimit: args.gasLimit})
+    const contract = await factory.deploy(args.bridgeAddress, [], [], [], [])
     await contract.deployed();
     args.genericHandlerContract = contract.address
     console.log("✓ GenericHandler contract deployed")
