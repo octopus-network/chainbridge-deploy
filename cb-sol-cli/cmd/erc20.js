@@ -40,7 +40,7 @@ const approveCmd = new Command("approve")
 
         const erc20Instance = new ethers.Contract(args.erc20Address, constants.ContractABIs.Erc20Mintable.abi, args.wallet);
         log(args, `Approving ${args.recipient} to spend ${args.amount} tokens from ${args.wallet.address}!`);
-        const tx = await erc20Instance.approve(args.recipient, expandDecimals(args.amount, args.parent.decimals), { gasPrice: args.gasPrice, gasLimit: args.gasLimit});
+        const tx = await erc20Instance.approve(args.recipient, expandDecimals(args.amount, args.parent.decimals));
         await waitForTx(args.provider, tx.hash)
     })
 
@@ -52,13 +52,14 @@ const depositCmd = new Command("deposit")
     .option('--resourceId <id>', 'ResourceID for transfer', constants.ERC20_RESOURCEID)
     .option('--bridge <address>', 'Bridge contract address', constants.BRIDGE_ADDRESS)
     .action(async function (args) {
+        console.log("---------args:", args);
         await setupParentArgs(args, args.parent.parent)
         args.decimals = args.parent.decimals
 
         // Instances
         const bridgeInstance = new ethers.Contract(args.bridge, constants.ContractABIs.Bridge.abi, args.wallet);
         const data = '0x' +
-            ethers.utils.hexZeroPad(ethers.utils.bigNumberify(expandDecimals(args.amount, args.parent.decimals)).toHexString(), 32).substr(2) +    // Deposit Amount        (32 bytes)
+            ethers.utils.hexZeroPad(ethers.utils.bigNumberify(expandDecimals(args.amount, args.decimals)).toHexString(), 32).substr(2) +    // Deposit Amount        (32 bytes)
             ethers.utils.hexZeroPad(ethers.utils.hexlify((args.recipient.length - 2)/2), 32).substr(2) +    // len(recipientAddress) (32 bytes)
             args.recipient.substr(2);                    // recipientAddress      (?? bytes)
 
@@ -74,8 +75,7 @@ const depositCmd = new Command("deposit")
         let tx = await bridgeInstance.deposit(
             args.dest, // destination chain id
             args.resourceId,
-            data,
-            { gasPrice: args.gasPrice, gasLimit: args.gasLimit}
+            data
         );
 
         await waitForTx(args.provider, tx.hash)

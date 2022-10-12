@@ -13,11 +13,15 @@ const registerResourceCmd = new Command("register-resource")
     .option('--targetContract <address>', `Contract address to be registered`, constants.ERC20_ADDRESS)
     .option('--resourceId <address>', `Resource ID to be registered`, constants.ERC20_RESOURCEID)
     .action(async function (args) {
+
         await setupParentArgs(args, args.parent.parent)
 
         const bridgeInstance = new ethers.Contract(args.bridge, constants.ContractABIs.Bridge.abi, args.wallet);
         log(args,`Registering contract ${args.targetContract} with resource ID ${args.resourceId} on handler ${args.handler}`);
-        const tx = await bridgeInstance.adminSetResource(args.handler, args.resourceId, args.targetContract, { gasPrice: args.gasPrice, gasLimit: args.gasLimit});
+
+        console.log(args.handler, args.resourceId, args.targetContract);
+
+        const tx = await bridgeInstance.adminSetResource(args.handler, args.resourceId, args.targetContract);
         await waitForTx(args.provider, tx.hash)
     })
 
@@ -41,7 +45,7 @@ const registerGenericResourceCmd = new Command("register-generic-resource")
         }
 
         log(args,`Registering generic resource ID ${args.resourceId} with contract ${args.targetContract} on handler ${args.handler}`)
-        const tx = await bridgeInstance.adminSetGenericResource(args.handler, args.resourceId, args.targetContract, args.deposit, args.execute, { gasPrice: args.gasPrice, gasLimit: args.gasLimit})
+        const tx = await bridgeInstance.adminSetGenericResource(args.handler, args.resourceId, args.targetContract, args.deposit, args.execute)
         await waitForTx(args.provider, tx.hash)
     })
 
@@ -55,7 +59,7 @@ const setBurnCmd = new Command("set-burn")
         const bridgeInstance = new ethers.Contract(args.bridge, constants.ContractABIs.Bridge.abi, args.wallet);
 
         log(args,`Setting contract ${args.tokenContract} as burnable on handler ${args.handler}`);
-        const tx = await bridgeInstance.adminSetBurnable(args.handler, args.tokenContract, { gasPrice: args.gasPrice, gasLimit: args.gasLimit});
+        const tx = await bridgeInstance.adminSetBurnable(args.handler, args.tokenContract);
         await waitForTx(args.provider, tx.hash)
     })
 
